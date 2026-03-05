@@ -1,0 +1,411 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+
+const SKIN_TONES = [
+  {
+    name: "Porcelain", desc: "Very fair, cool or neutral undertones",
+    colors: [
+      { name:"Navy Blue",     hex:"#1B3A5C", desc:"Creates elegant contrast",       match:"95%" },
+      { name:"Dusty Rose",    hex:"#C4879A", desc:"Softly flattering warmth",        match:"92%" },
+      { name:"Sage Green",    hex:"#7A9E7E", desc:"Earthy complement to fair skin",  match:"89%" },
+      { name:"Burgundy",      hex:"#722F37", desc:"Rich depth & drama",              match:"87%" },
+      { name:"Icy Lavender",  hex:"#C3B8D8", desc:"Ethereal cool-toned harmony",     match:"85%" },
+    ]
+  },
+  {
+    name: "Ivory", desc: "Fair skin, warm or neutral undertones",
+    colors: [
+      { name:"Camel",         hex:"#C19A6B", desc:"Warm-toned sophistication",       match:"95%" },
+      { name:"Cobalt Blue",   hex:"#0047AB", desc:"Bold complementary contrast",     match:"92%" },
+      { name:"Forest Green",  hex:"#355E3B", desc:"Rich natural harmony",            match:"90%" },
+      { name:"Terracotta",    hex:"#E2725B", desc:"Glows with warm undertones",      match:"88%" },
+      { name:"Cream White",   hex:"#FFFDD0", desc:"Soft tonal dressing",             match:"85%" },
+    ]
+  },
+  {
+    name: "Beige", desc: "Light to medium, neutral-warm undertones",
+    colors: [
+      { name:"Olive Green",   hex:"#6B7C41", desc:"Natural earthy harmony",          match:"95%" },
+      { name:"Rust Orange",   hex:"#B7410E", desc:"Warmth amplified",                match:"92%" },
+      { name:"Teal",          hex:"#008080", desc:"Refreshing contrast",             match:"90%" },
+      { name:"Golden Yellow", hex:"#FFD700", desc:"Sun-kissed radiance",             match:"88%" },
+      { name:"Warm Mauve",    hex:"#997B8D", desc:"Elegant muted complement",        match:"85%" },
+    ]
+  },
+  {
+    name: "Sand", desc: "Medium skin, warm golden undertones",
+    colors: [
+      { name:"Deep Purple",   hex:"#4B0082", desc:"Royal contrast for warm tones",   match:"95%" },
+      { name:"Coral",         hex:"#FF6F61", desc:"Vibrant warm-toned glow",         match:"93%" },
+      { name:"Emerald",       hex:"#50C878", desc:"Fresh jewel-toned brilliance",    match:"90%" },
+      { name:"Electric Blue", hex:"#0071E3", desc:"Cool pop against warm skin",      match:"88%" },
+      { name:"Off-White",     hex:"#FAF0E6", desc:"Effortless light contrast",       match:"84%" },
+    ]
+  },
+  {
+    name: "Honey", desc: "Medium-tan, golden warm undertones",
+    colors: [
+      { name:"Burnt Sienna",  hex:"#E97451", desc:"Analogous warmth & depth",        match:"94%" },
+      { name:"Royal Blue",    hex:"#4169E1", desc:"Cool contrast makes skin glow",   match:"92%" },
+      { name:"Mustard",       hex:"#FFDB58", desc:"Golden harmony",                  match:"90%" },
+      { name:"Chocolate",     hex:"#7B3F00", desc:"Rich tonal depth",                match:"88%" },
+      { name:"Jade Green",    hex:"#00A86B", desc:"Fresh & striking complement",     match:"86%" },
+    ]
+  },
+  {
+    name: "Caramel", desc: "Tan to medium-dark, warm undertones",
+    colors: [
+      { name:"Ivory White",   hex:"#FFFFF0", desc:"Luminous light contrast",         match:"96%" },
+      { name:"Magenta",       hex:"#CC0066", desc:"Vivid pop of contrast",           match:"93%" },
+      { name:"Tangerine",     hex:"#F28500", desc:"Warm citrus radiance",            match:"90%" },
+      { name:"Slate Blue",    hex:"#6A7BA2", desc:"Cool muted sophistication",       match:"88%" },
+      { name:"Fern Green",    hex:"#4F7942", desc:"Earthy natural complement",       match:"85%" },
+    ]
+  },
+  {
+    name: "Chestnut", desc: "Medium-dark, rich warm-neutral tones",
+    colors: [
+      { name:"Bright White",  hex:"#FFFFFF", desc:"Maximum luminosity contrast",     match:"96%" },
+      { name:"Hot Pink",      hex:"#FF69B4", desc:"Vivid and flattering vibrancy",   match:"93%" },
+      { name:"Cobalt Green",  hex:"#006B5B", desc:"Deep cool complement",            match:"91%" },
+      { name:"Saffron",       hex:"#F4C430", desc:"Golden warmth enhancer",          match:"89%" },
+      { name:"Warm Red",      hex:"#C0392B", desc:"Bold rich-toned harmony",         match:"86%" },
+    ]
+  },
+  {
+    name: "Espresso", desc: "Deep dark skin, rich cool or warm tones",
+    colors: [
+      { name:"Pure White",      hex:"#FFFFFF", desc:"Striking luminous contrast",    match:"97%" },
+      { name:"Electric Yellow", hex:"#FFE600", desc:"Radiant vibrant warmth",        match:"94%" },
+      { name:"Royal Purple",    hex:"#6B2FA0", desc:"Majestic jewel-toned depth",    match:"92%" },
+      { name:"Sky Blue",        hex:"#87CEEB", desc:"Airy cool-toned brightness",    match:"89%" },
+      { name:"Bright Coral",    hex:"#FF4040", desc:"Bold vivid pop",                match:"87%" },
+    ]
+  }
+];
+
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h,s,l=(max+min)/2;
+  if(max===min){h=s=0;}
+  else{
+    const d=max-min;
+    s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){
+      case r:h=((g-b)/d+(g<b?6:0))/6;break;
+      case g:h=((b-r)/d+2)/6;break;
+      case b:h=((r-g)/d+4)/6;break;
+    }
+  }
+  return[h*360,s*100,l*100];
+}
+
+function detectSkinRgb(imageData){
+  const data=imageData.data;
+  let rSum=0,gSum=0,bSum=0,count=0;
+  for(let i=0;i<data.length;i+=16){
+    const r=data[i],g=data[i+1],b=data[i+2];
+    if(r>60&&g>30&&b>15&&r>b&&(r-g)>8&&(Math.max(r,g,b)-Math.min(r,g,b))>10){
+      rSum+=r;gSum+=g;bSum+=b;count++;
+    }
+  }
+  return count>20?{r:rSum/count,g:gSum/count,b:bSum/count}:null;
+}
+
+function matchTone(rgb){
+  const[h,s,l]=rgbToHsl(rgb.r,rgb.g,rgb.b);
+  const ranges=[
+    {hMin:0,hMax:40,sMin:10,sMax:45,lMin:75,lMax:100},
+    {hMin:15,hMax:45,sMin:20,sMax:55,lMin:68,lMax:82},
+    {hMin:20,hMax:50,sMin:25,sMax:60,lMin:58,lMax:72},
+    {hMin:20,hMax:50,sMin:30,sMax:65,lMin:48,lMax:62},
+    {hMin:18,hMax:45,sMin:35,sMax:70,lMin:38,lMax:52},
+    {hMin:15,hMax:42,sMin:38,sMax:72,lMin:28,lMax:42},
+    {hMin:10,hMax:40,sMin:35,sMax:72,lMin:20,lMax:32},
+    {hMin:0,hMax:50,sMin:20,sMax:80,lMin:0,lMax:22},
+  ];
+  let best=0,bestScore=-Infinity;
+  ranges.forEach((r,i)=>{
+    const hS=h>=r.hMin&&h<=r.hMax?0:-Math.min(Math.abs(h-r.hMin),Math.abs(h-r.hMax));
+    const sS=s>=r.sMin&&s<=r.sMax?0:-Math.min(Math.abs(s-r.sMin),Math.abs(s-r.sMax));
+    const lS=l>=r.lMin&&l<=r.lMax?0:-Math.min(Math.abs(l-r.lMin),Math.abs(l-r.lMax))*2;
+    const t=hS+sS+lS;
+    if(t>bestScore){bestScore=t;best=i;}
+  });
+  return SKIN_TONES[best];
+}
+
+export default function ToneFit() {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const animRef = useRef(null);
+  const streamRef = useRef(null);
+
+  // phases: welcome | requesting | camera | analyzing | results | error
+  const [phase, setPhase] = useState("welcome");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [sampleColor, setSampleColor] = useState("transparent");
+  const [detectedRgb, setDetectedRgb] = useState(null);
+  const [matchedTone, setMatchedTone] = useState(null);
+
+  const stopStream = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
+    }
+    cancelAnimationFrame(animRef.current);
+  }, []);
+
+  const startCamera = useCallback(async () => {
+    setPhase("requesting");
+    setErrorMsg("");
+    try {
+      // Check if getUserMedia is even available
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Camera API not available in this browser context.");
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 960 } },
+        audio: false,
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.onloadedmetadata = () => setPhase("camera");
+      }
+    } catch (e) {
+      let msg = "Camera access was denied or unavailable.";
+      if (e.name === "NotAllowedError") msg = "Permission denied. Please allow camera access in your browser settings and try again.";
+      else if (e.name === "NotFoundError") msg = "No camera found on this device.";
+      else if (e.name === "NotSupportedError" || e.message.includes("not available")) msg = "Camera API is not supported here. Try opening this artifact in a new tab (click ↗ icon above).";
+      else msg = `Error: ${e.message}`;
+      setErrorMsg(msg);
+      setPhase("error");
+    }
+  }, []);
+
+  // Live sample dot loop
+  useEffect(() => {
+    if (phase !== "camera") return;
+    const tick = () => {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      if (!video || !canvas || video.readyState < 2) {
+        animRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      canvas.width = video.videoWidth || 320;
+      canvas.height = video.videoHeight || 240;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      ctx.save(); ctx.scale(-1,1);
+      ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+      ctx.restore();
+      const cx = canvas.width/2, cy = canvas.height/2, s = 30;
+      try {
+        const px = ctx.getImageData(cx-s/2, cy-s/2, s, s);
+        const rgb = detectSkinRgb(px);
+        if (rgb) setSampleColor(`rgb(${rgb.r|0},${rgb.g|0},${rgb.b|0})`);
+      } catch(_) {}
+      animRef.current = requestAnimationFrame(tick);
+    };
+    animRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [phase]);
+
+  useEffect(() => () => stopStream(), [stopStream]);
+
+  const handleCapture = useCallback(async () => {
+    cancelAnimationFrame(animRef.current);
+    setPhase("analyzing");
+    await new Promise(r => setTimeout(r, 1400));
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.save(); ctx.scale(-1,1);
+    ctx.drawImage(video, -canvas.width, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    const cx = canvas.width/2, cy = canvas.height/2;
+    const w = canvas.width*0.26, h = canvas.height*0.36;
+    const data = ctx.getImageData(cx-w/2, cy-h/2, w, h);
+    const rgb = detectSkinRgb(data);
+
+    stopStream();
+
+    if (!rgb) {
+      setPhase("camera");
+      startCamera();
+      return;
+    }
+
+    setDetectedRgb(rgb);
+    setMatchedTone(matchTone(rgb));
+    setPhase("results");
+  }, [stopStream, startCamera]);
+
+  const handleRetake = useCallback(() => {
+    setDetectedRgb(null);
+    setMatchedTone(null);
+    setSampleColor("transparent");
+    startCamera();
+  }, [startCamera]);
+
+  return (
+    <div style={{ fontFamily:"'Segoe UI',system-ui,sans-serif", background:"#faf9f7", minHeight:"100vh", maxWidth:430, margin:"0 auto", color:"#1a1816" }}>
+
+      {/* Header */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"16px 20px 13px", borderBottom:"1px solid #ede9e3", background:"#faf9f7", position:"sticky", top:0, zIndex:20 }}>
+        <div style={{ fontSize:24, fontWeight:300, letterSpacing:-0.5 }}>
+          Tone<span style={{ color:"#c9a96e" }}>Fit</span>
+        </div>
+        <div style={{ fontSize:10, letterSpacing:2.5, textTransform:"uppercase", color:"#9a9088" }}>Color Intelligence</div>
+      </div>
+
+      {/* WELCOME SCREEN */}
+      {phase === "welcome" && (
+        <div style={{ padding:"48px 28px", textAlign:"center" }}>
+          <div style={{ fontSize:56, marginBottom:16 }}>🎨</div>
+          <div style={{ fontSize:26, fontWeight:300, marginBottom:10, lineHeight:1.3 }}>
+            Discover Your<br /><strong style={{ fontWeight:500 }}>Best Colours</strong>
+          </div>
+          <div style={{ fontSize:14, color:"#9a9088", marginBottom:36, lineHeight:1.7 }}>
+            Point your camera at your face and we'll detect your skin tone to recommend the 5 most flattering outfit colours.
+          </div>
+
+          <div style={{ display:"flex", flexDirection:"column", gap:12, marginBottom:32 }}>
+            {["📷 Live camera detects your skin tone", "🎨 Matched to 8 skin tone categories", "👗 5 personalised outfit colour picks"].map((t,i) => (
+              <div key={i} style={{ background:"white", border:"1px solid #ede9e3", borderRadius:14, padding:"12px 16px", fontSize:13, color:"#555", textAlign:"left", boxShadow:"0 2px 12px rgba(0,0,0,0.04)" }}>
+                {t}
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={startCamera}
+            style={{ background:"#1a1816", color:"white", border:"none", padding:"16px 40px", borderRadius:100, fontSize:15, fontWeight:400, cursor:"pointer", boxShadow:"0 4px 20px rgba(26,24,22,0.2)", width:"100%", letterSpacing:0.3 }}
+          >
+            ✦ Enable Camera
+          </button>
+          <div style={{ fontSize:11, color:"#bbb", marginTop:12 }}>
+            Camera is used locally — nothing is uploaded
+          </div>
+        </div>
+      )}
+
+      {/* REQUESTING */}
+      {phase === "requesting" && (
+        <div style={{ padding:"60px 28px", textAlign:"center" }}>
+          <div style={{ width:44, height:44, border:"2px solid #ede9e3", borderTopColor:"#c9a96e", borderRadius:"50%", animation:"spin 0.75s linear infinite", margin:"0 auto 20px" }} />
+          <div style={{ fontSize:18, fontWeight:300, color:"#555" }}>Requesting camera access…</div>
+          <div style={{ fontSize:13, color:"#aaa", marginTop:8 }}>Please tap <strong>Allow</strong> when your browser asks</div>
+          <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+        </div>
+      )}
+
+      {/* CAMERA */}
+      {(phase === "camera" || phase === "analyzing") && (
+        <>
+          <div style={{ position:"relative", width:"100%", aspectRatio:"3/4", background:"#111", overflow:"hidden" }}>
+            <video ref={videoRef} autoPlay playsInline muted style={{ width:"100%", height:"100%", objectFit:"cover", display:"block", transform:"scaleX(-1)" }} />
+            <canvas ref={canvasRef} style={{ display:"none" }} />
+
+            {/* oval */}
+            <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", pointerEvents:"none" }}>
+              <div style={{ width:"52%", aspectRatio:"3/4", border:"2px solid rgba(255,255,255,0.65)", borderRadius:"50%", boxShadow:"0 0 0 9999px rgba(0,0,0,0.3)", animation:"ovalPulse 2.8s ease-in-out infinite" }} />
+            </div>
+
+            {/* sample dot */}
+            <div style={{ position:"absolute", width:32, height:32, borderRadius:"50%", border:"2.5px solid white", top:"50%", left:"50%", transform:"translate(-50%,-50%)", background: sampleColor, boxShadow:"0 2px 10px rgba(0,0,0,0.35)", pointerEvents:"none", transition:"background 0.3s" }} />
+
+            {phase === "camera" && (
+              <div style={{ position:"absolute", bottom:16, left:"50%", transform:"translateX(-50%)", background:"rgba(0,0,0,0.35)", backdropFilter:"blur(8px)", color:"rgba(255,255,255,0.9)", fontSize:12, padding:"8px 18px", borderRadius:100, whiteSpace:"nowrap" }}>
+                Align your face within the oval
+              </div>
+            )}
+
+            {phase === "analyzing" && (
+              <div style={{ position:"absolute", inset:0, background:"rgba(250,249,247,0.88)", backdropFilter:"blur(6px)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:14 }}>
+                <div style={{ width:42, height:42, border:"2px solid #ede9e3", borderTopColor:"#c9a96e", borderRadius:"50%", animation:"spin 0.75s linear infinite" }} />
+                <div style={{ fontSize:19, fontWeight:300 }}>Analysing your tone…</div>
+              </div>
+            )}
+
+            <style>{`
+              @keyframes ovalPulse{0%,100%{border-color:rgba(255,255,255,0.5)}50%{border-color:rgba(201,169,110,0.95)}}
+              @keyframes spin{to{transform:rotate(360deg)}}
+              @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+            `}</style>
+          </div>
+
+          {phase === "camera" && (
+            <div style={{ display:"flex", justifyContent:"center", padding:"22px 24px 10px" }}>
+              <button onClick={handleCapture} style={{ display:"flex", alignItems:"center", gap:9, background:"#1a1816", color:"white", border:"none", padding:"15px 36px", borderRadius:100, fontSize:14, cursor:"pointer", boxShadow:"0 4px 22px rgba(26,24,22,0.2)" }}>
+                <span style={{ fontSize:17 }}>✦</span> Analyse My Skin Tone
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ERROR */}
+      {phase === "error" && (
+        <div style={{ margin:"28px 18px", padding:24, background:"#fff8f8", borderRadius:18, border:"1px solid #fde", textAlign:"center" }}>
+          <div style={{ fontSize:32, marginBottom:12 }}>📷</div>
+          <div style={{ fontSize:14, color:"#c0392b", lineHeight:1.7, marginBottom:20 }}>{errorMsg}</div>
+          <button onClick={startCamera} style={{ background:"#1a1816", color:"white", border:"none", padding:"12px 28px", borderRadius:100, fontSize:13, cursor:"pointer" }}>
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {/* RESULTS */}
+      {phase === "results" && matchedTone && detectedRgb && (
+        <>
+          {/* Captured tone banner */}
+          <div style={{ width:"100%", aspectRatio:"3/4", background:`rgb(${detectedRgb.r|0},${detectedRgb.g|0},${detectedRgb.b|0})`, display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:8 }}>
+            <div style={{ fontSize:28, color:"rgba(255,255,255,0.8)" }}>✦</div>
+            <div style={{ fontSize:20, color:"white", fontWeight:300 }}>Tone Captured</div>
+          </div>
+
+          <div style={{ height:16 }} />
+
+          {/* Tone card */}
+          <div style={{ margin:"0 18px", padding:"16px 18px", background:"white", borderRadius:18, border:"1px solid #ede9e3", boxShadow:"0 4px 28px rgba(0,0,0,0.06)", animation:"slideUp 0.45s ease" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:14 }}>
+              <div style={{ width:52, height:52, borderRadius:13, background:`rgb(${detectedRgb.r|0},${detectedRgb.g|0},${detectedRgb.b|0})`, flexShrink:0, border:"1px solid rgba(0,0,0,0.07)", boxShadow:"0 3px 14px rgba(0,0,0,0.13)" }} />
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:21, fontWeight:400, lineHeight:1.2 }}>{matchedTone.name}</div>
+                <div style={{ fontSize:12, color:"#9a9088", marginTop:3 }}>{matchedTone.desc}</div>
+              </div>
+              <button onClick={handleRetake} style={{ background:"none", border:"1px solid #ede9e3", color:"#9a9088", fontFamily:"inherit", fontSize:12, padding:"7px 13px", borderRadius:100, cursor:"pointer" }}>
+                Retake
+              </button>
+            </div>
+          </div>
+
+          {/* Colour picks */}
+          <div style={{ padding:"22px 18px 40px", animation:"slideUp 0.5s ease 0.1s both" }}>
+            <div style={{ fontSize:23, fontWeight:400, marginBottom:3 }}>Your Best Colours</div>
+            <div style={{ fontSize:12, color:"#9a9088", marginBottom:18 }}>5 outfit colours chosen for your skin tone</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:11 }}>
+              {matchedTone.colors.map((c, i) => (
+                <div key={i} style={{ display:"flex", alignItems:"center", gap:14, background:"white", borderRadius:16, border:"1px solid #ede9e3", padding:"13px 15px", boxShadow:"0 2px 16px rgba(0,0,0,0.05)", animation:`slideUp 0.45s ease ${0.08+i*0.08}s both` }}>
+                  <div style={{ width:52, height:52, borderRadius:13, background:c.hex, flexShrink:0, border:"1px solid rgba(0,0,0,0.05)" }} />
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontWeight:500, fontSize:14, lineHeight:1.2 }}>{c.name}</div>
+                    <div style={{ fontSize:12, color:"#9a9088", marginTop:2, lineHeight:1.4 }}>{c.desc}</div>
+                    <div style={{ fontSize:11, color:"#ccc", fontFamily:"monospace", marginTop:4 }}>{c.hex}</div>
+                  </div>
+                  <span style={{ background:"#f5ede0", color:"#c9a96e", fontSize:11, fontWeight:500, padding:"4px 10px", borderRadius:100, whiteSpace:"nowrap" }}>{c.match}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
