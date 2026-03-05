@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#faf9f7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="ToneFit" />
+  <meta name="description" content="Discover your best outfit colours based on your skin tone using live camera detection." />
+  <title>ToneFit — Color Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #faf9f7;
+      --white: #ffffff;
+      --ink: #1a1816;
+      --ink-light: #9a9088;
+      --border: #ede9e3;
+      --gold: #c9a96e;
+      --gold-bg: #f5ede0;
+      --radius: 18px;
+      --shadow: 0 4px 28px rgba(0,0,0,0.06);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body { display: flex; flex-direction: column; min-height: 100dvh; }
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px 13px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky; top: 0; z-index: 20;
+    }
+    .logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; letter-spacing: -0.5px; }
+    .logo span { color: var(--gold); }
+    .tagline { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink-light); }
+
+    .screen { display: none; flex: 1; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* WELCOME */
+    #screen-welcome { align-items: center; justify-content: center; padding: 40px 28px; text-align: center; }
+    .welcome-icon { font-size: 60px; margin-bottom: 20px; }
+    .welcome-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.25; margin-bottom: 12px; }
+    .welcome-sub { font-size: 14px; color: var(--ink-light); line-height: 1.75; margin-bottom: 32px; max-width: 300px; }
+    .feature-list { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 32px; }
+    .feature-item { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 13px 16px; font-size: 13px; color: #555; text-align: left; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
+
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      width: 100%; background: var(--ink); color: white; border: none;
+      padding: 16px 40px; border-radius: 100px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 400;
+      letter-spacing: 0.3px; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(26,24,22,0.2);
+      transition: transform 0.12s;
+    }
+    .btn-primary:active { transform: scale(0.97); }
+    .privacy-note { font-size: 11px; color: #ccc; margin-top: 12px; }
+
+    /* REQUESTING */
+    #screen-requesting { align-items: center; justify-content: center; gap: 16px; }
+    .spinner { width: 44px; height: 44px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.75s linear infinite; }
+    .requesting-text { font-size: 18px; font-weight: 300; color: #555; }
+    .requesting-sub { font-size: 13px; color: #aaa; }
+
+    /* CAMERA */
+    #screen-camera { flex-direction: column; }
+    .camera-wrap { position: relative; width: 100%; aspect-ratio: 3/4; background: #111; overflow: hidden; flex-shrink: 0; }
+    #video { width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1); }
+    .oval-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .oval { width: 52%; aspect-ratio: 3/4; border: 2px solid rgba(255,255,255,0.65); border-radius: 50%; box-shadow: 0 0 0 9999px rgba(0,0,0,0.3); animation: ovalPulse 2.8s ease-in-out infinite; }
+    .sample-dot { position: absolute; width: 32px; height: 32px; border-radius: 50%; border: 2.5px solid white; top: 50%; left: 50%; transform: translate(-50%,-50%); box-shadow: 0 2px 10px rgba(0,0,0,0.35); pointer-events: none; transition: background 0.3s; background: transparent; }
+    .cam-hint { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.35); backdrop-filter: blur(8px); color: rgba(255,255,255,0.9); font-size: 12px; padding: 8px 18px; border-radius: 100px; white-space: nowrap; }
+    .analyzing-overlay { display: none; position: absolute; inset: 0; background: rgba(250,249,247,0.88); backdrop-filter: blur(6px); flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 10; }
+    .analyzing-overlay.show { display: flex; }
+    .analyzing-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; }
+    .capture-wrap { display: flex; justify-content: center; padding: 22px 24px 16px; }
+
+    /* ERROR */
+    #screen-error { align-items: center; justify-content: center; padding: 32px 24px; text-align: center; }
+    .error-box { background: #fff8f8; border: 1px solid #fde; border-radius: var(--radius); padding: 28px 24px; width: 100%; }
+    .error-icon { font-size: 36px; margin-bottom: 12px; }
+    .error-msg { font-size: 14px; color: #c0392b; line-height: 1.7; margin-bottom: 20px; }
+    .btn-secondary { background: var(--ink); color: white; border: none; padding: 12px 28px; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+
+    /* RESULTS */
+    #screen-results { flex-direction: column; overflow-y: auto; }
+    .tone-banner { width: 100%; aspect-ratio: 3/4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; }
+    .tone-banner-icon { font-size: 28px; color: rgba(255,255,255,0.75); }
+    .tone-banner-label { font-size: 20px; color: white; font-weight: 300; }
+    .tone-card { margin: 16px 18px 0; padding: 16px 18px; background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); animation: slideUp 0.45s ease; }
+    .tone-row { display: flex; align-items: center; gap: 14px; }
+    .tone-swatch { width: 52px; height: 52px; border-radius: 13px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.07); box-shadow: 0 3px 14px rgba(0,0,0,0.13); }
+    .tone-info { flex: 1; }
+    .tone-name { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400; line-height: 1.2; }
+    .tone-desc { font-size: 12px; color: var(--ink-light); margin-top: 3px; }
+    .retake-btn { background: none; border: 1px solid var(--border); color: var(--ink-light); font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 7px 13px; border-radius: 100px; cursor: pointer; white-space: nowrap; }
+    .reco-section { padding: 22px 18px 48px; animation: slideUp 0.5s ease 0.1s both; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; margin-bottom: 3px; }
+    .section-sub { font-size: 12px; color: var(--ink-light); letter-spacing: 0.3px; margin-bottom: 18px; }
+    .colors-list { display: flex; flex-direction: column; gap: 11px; }
+    .color-card { display: flex; align-items: center; gap: 14px; background: var(--white); border-radius: 16px; border: 1px solid var(--border); padding: 13px 15px; box-shadow: 0 2px 16px rgba(0,0,0,0.05); animation: slideUp 0.45s ease both; }
+    .color-card:nth-child(1){animation-delay:.10s} .color-card:nth-child(2){animation-delay:.18s}
+    .color-card:nth-child(3){animation-delay:.26s} .color-card:nth-child(4){animation-delay:.34s}
+    .color-card:nth-child(5){animation-delay:.42s}
+    .color-block { width: 52px; height: 52px; border-radius: 13px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.05); }
+    .color-info { flex: 1; }
+    .color-name { font-weight: 500; font-size: 14px; line-height: 1.2; }
+    .color-desc { font-size: 12px; color: var(--ink-light); margin-top: 2px; line-height: 1.4; }
+    .color-hex  { font-size: 11px; color: #ccc; font-family: monospace; margin-top: 4px; }
+    .match-badge { background: var(--gold-bg); color: var(--gold); font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 100px; white-space: nowrap; letter-spacing: 0.3px; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes ovalPulse { 0%,100%{border-color:rgba(255,255,255,0.5)} 50%{border-color:rgba(201,169,110,0.95)} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    canvas { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Tone<span>Fit</span></div>
+  <div class="tagline">Color Intelligence</div>
+</div>
+
+<div class="screen active" id="screen-welcome">
+  <div class="welcome-icon">🎨</div>
+  <div class="welcome-title">Discover Your<br><strong>Best Colours</strong></div>
+  <p class="welcome-sub">Point your camera at your face. We detect your skin tone and recommend the 5 most flattering outfit colours.</p>
+  <div class="feature-list">
+    <div class="feature-item">📷 Live camera detects your skin tone</div>
+    <div class="feature-item">🎨 Matched across 8 skin tone categories</div>
+    <div class="feature-item">👗 5 personalised outfit colour picks</div>
+  </div>
+  <button class="btn-primary" onclick="requestCamera()"><span>✦</span> Enable Camera</button>
+  <p class="privacy-note">Camera is used locally — nothing is uploaded</p>
+</div>
+
+<div class="screen" id="screen-requesting">
+  <div class="spinner"></div>
+  <div class="requesting-text">Requesting camera…</div>
+  <div class="requesting-sub">Tap <strong>Allow</strong> when your browser asks</div>
+</div>
+
+<div class="screen" id="screen-camera">
+  <div class="camera-wrap">
+    <video id="video" autoplay playsinline muted></video>
+    <div class="oval-overlay"><div class="oval"></div></div>
+    <div class="sample-dot" id="sampleDot"></div>
+    <div class="cam-hint">Align your face within the oval</div>
+    <div class="analyzing-overlay" id="analyzingOverlay">
+      <div class="spinner"></div>
+      <div class="analyzing-text">Analysing your tone…</div>
+    </div>
+  </div>
+  <div class="capture-wrap">
+    <button class="btn-primary" style="max-width:320px" onclick="captureAndAnalyse()">
+      <span>✦</span> Analyse My Skin Tone
+    </button>
+  </div>
+</div>
+
+<div class="screen" id="screen-error">
+  <div class="error-box">
+    <div class="error-icon">📷</div>
+    <div class="error-msg" id="errorMsg">Camera access was denied.</div>
+    <button class="btn-secondary" onclick="requestCamera()">Try Again</button>
+  </div>
+</div>
+
+<div class="screen" id="screen-results">
+  <div class="tone-banner" id="toneBanner">
+    <div class="tone-banner-icon">✦</div>
+    <div class="tone-banner-label">Tone Captured</div>
+  </div>
+  <div class="tone-card">
+    <div class="tone-row">
+      <div class="tone-swatch" id="toneSwatch"></div>
+      <div class="tone-info">
+        <div class="tone-name" id="toneName"></div>
+        <div class="tone-desc" id="toneDesc"></div>
+      </div>
+      <button class="retake-btn" onclick="retake()">Retake</button>
+    </div>
+  </div>
+  <div class="reco-section">
+    <div class="section-title">Your Best Colours</div>
+    <div class="section-sub">5 outfit colours chosen for your skin tone</div>
+    <div class="colors-list" id="colorsList"></div>
+  </div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const TONES=[
+  {name:"Porcelain",desc:"Very fair, cool or neutral undertones",range:{hMin:0,hMax:40,sMin:10,sMax:45,lMin:75,lMax:100},colors:[{name:"Navy Blue",hex:"#1B3A5C",desc:"Creates elegant contrast",match:"95%"},{name:"Dusty Rose",hex:"#C4879A",desc:"Softly flattering warmth",match:"92%"},{name:"Sage Green",hex:"#7A9E7E",desc:"Earthy complement to fair skin",match:"89%"},{name:"Burgundy",hex:"#722F37",desc:"Rich depth & drama",match:"87%"},{name:"Icy Lavender",hex:"#C3B8D8",desc:"Ethereal cool-toned harmony",match:"85%"}]},
+  {name:"Ivory",desc:"Fair skin, warm or neutral undertones",range:{hMin:15,hMax:45,sMin:20,sMax:55,lMin:68,lMax:82},colors:[{name:"Camel",hex:"#C19A6B",desc:"Warm-toned sophistication",match:"95%"},{name:"Cobalt Blue",hex:"#0047AB",desc:"Bold complementary contrast",match:"92%"},{name:"Forest Green",hex:"#355E3B",desc:"Rich natural harmony",match:"90%"},{name:"Terracotta",hex:"#E2725B",desc:"Glows with warm undertones",match:"88%"},{name:"Cream White",hex:"#FFFDD0",desc:"Soft tonal dressing",match:"85%"}]},
+  {name:"Beige",desc:"Light to medium, neutral-warm undertones",range:{hMin:20,hMax:50,sMin:25,sMax:60,lMin:58,lMax:72},colors:[{name:"Olive Green",hex:"#6B7C41",desc:"Natural earthy harmony",match:"95%"},{name:"Rust Orange",hex:"#B7410E",desc:"Warmth amplified",match:"92%"},{name:"Teal",hex:"#008080",desc:"Refreshing contrast",match:"90%"},{name:"Golden Yellow",hex:"#FFD700",desc:"Sun-kissed radiance",match:"88%"},{name:"Warm Mauve",hex:"#997B8D",desc:"Elegant muted complement",match:"85%"}]},
+  {name:"Sand",desc:"Medium skin, warm golden undertones",range:{hMin:20,hMax:50,sMin:30,sMax:65,lMin:48,lMax:62},colors:[{name:"Deep Purple",hex:"#4B0082",desc:"Royal contrast for warm tones",match:"95%"},{name:"Coral",hex:"#FF6F61",desc:"Vibrant warm-toned glow",match:"93%"},{name:"Emerald",hex:"#50C878",desc:"Fresh jewel-toned brilliance",match:"90%"},{name:"Electric Blue",hex:"#0071E3",desc:"Cool pop against warm skin",match:"88%"},{name:"Off-White",hex:"#FAF0E6",desc:"Effortless light contrast",match:"84%"}]},
+  {name:"Honey",desc:"Medium-tan, golden warm undertones",range:{hMin:18,hMax:45,sMin:35,sMax:70,lMin:38,lMax:52},colors:[{name:"Burnt Sienna",hex:"#E97451",desc:"Analogous warmth & depth",match:"94%"},{name:"Royal Blue",hex:"#4169E1",desc:"Cool contrast makes skin glow",match:"92%"},{name:"Mustard",hex:"#FFDB58",desc:"Golden harmony",match:"90%"},{name:"Chocolate",hex:"#7B3F00",desc:"Rich tonal depth",match:"88%"},{name:"Jade Green",hex:"#00A86B",desc:"Fresh & striking complement",match:"86%"}]},
+  {name:"Caramel",desc:"Tan to medium-dark, warm undertones",range:{hMin:15,hMax:42,sMin:38,sMax:72,lMin:28,lMax:42},colors:[{name:"Ivory White",hex:"#FFFFF0",desc:"Luminous light contrast",match:"96%"},{name:"Magenta",hex:"#CC0066",desc:"Vivid pop of contrast",match:"93%"},{name:"Tangerine",hex:"#F28500",desc:"Warm citrus radiance",match:"90%"},{name:"Slate Blue",hex:"#6A7BA2",desc:"Cool muted sophistication",match:"88%"},{name:"Fern Green",hex:"#4F7942",desc:"Earthy natural complement",match:"85%"}]},
+  {name:"Chestnut",desc:"Medium-dark, rich warm-neutral tones",range:{hMin:10,hMax:40,sMin:35,sMax:72,lMin:20,lMax:32},colors:[{name:"Bright White",hex:"#FFFFFF",desc:"Maximum luminosity contrast",match:"96%"},{name:"Hot Pink",hex:"#FF69B4",desc:"Vivid and flattering vibrancy",match:"93%"},{name:"Cobalt Green",hex:"#006B5B",desc:"Deep cool complement",match:"91%"},{name:"Saffron",hex:"#F4C430",desc:"Golden warmth enhancer",match:"89%"},{name:"Warm Red",hex:"#C0392B",desc:"Bold rich-toned harmony",match:"86%"}]},
+  {name:"Espresso",desc:"Deep dark skin, rich cool or warm tones",range:{hMin:0,hMax:50,sMin:20,sMax:80,lMin:0,lMax:22},colors:[{name:"Pure White",hex:"#FFFFFF",desc:"Striking luminous contrast",match:"97%"},{name:"Electric Yellow",hex:"#FFE600",desc:"Radiant vibrant warmth",match:"94%"},{name:"Royal Purple",hex:"#6B2FA0",desc:"Majestic jewel-toned depth",match:"92%"},{name:"Sky Blue",hex:"#87CEEB",desc:"Airy cool-toned brightness",match:"89%"},{name:"Bright Coral",hex:"#FF4040",desc:"Bold vivid pop",match:"87%"}]},
+];
+
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h,s,l=(mx+mn)/2;if(mx===mn){h=s=0;}else{const d=mx-mn;s=l>0.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}}return[h*360,s*100,l*100];}
+function detectSkin(id){const d=id.data;let rs=0,gs=0,bs=0,n=0;for(let i=0;i<d.length;i+=16){const r=d[i],g=d[i+1],b=d[i+2];if(r>60&&g>30&&b>15&&r>b&&(r-g)>8&&(Math.max(r,g,b)-Math.min(r,g,b))>10){rs+=r;gs+=g;bs+=b;n++;}}return n>20?{r:rs/n,g:gs/n,b:bs/n}:null;}
+function matchTone(rgb){const[h,s,l]=rgbToHsl(rgb.r,rgb.g,rgb.b);let best=0,bsc=-Infinity;TONES.forEach((t,i)=>{const{hMin,hMax,sMin,sMax,lMin,lMax}=t.range;const hs=h>=hMin&&h<=hMax?0:-Math.min(Math.abs(h-hMin),Math.abs(h-hMax));const ss=s>=sMin&&s<=sMax?0:-Math.min(Math.abs(s-sMin),Math.abs(s-sMax));const ls=l>=lMin&&l<=lMax?0:-Math.min(Math.abs(l-lMin),Math.abs(l-lMax))*2;const sc=hs+ss+ls;if(sc>bsc){bsc=sc;best=i;}});return TONES[best];}
+
+let stream=null,animId=null;
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');}
+
+async function requestCamera(){
+  show('requesting');
+  try{
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw Object.assign(new Error('unavailable'),{name:'NotSupportedError'});
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:960}},audio:false});
+    const v=document.getElementById('video');
+    v.srcObject=stream;
+    v.onloadedmetadata=()=>{show('camera');startLoop();};
+  }catch(e){
+    let msg='Camera access was denied.';
+    if(e.name==='NotAllowedError') msg='Permission denied. Tap the 🔒 icon in your address bar → set Camera to Allow → tap Try Again.';
+    else if(e.name==='NotFoundError') msg='No camera found on this device.';
+    else if(e.name==='NotSupportedError') msg='Camera API not available. Ensure the page is opened over HTTPS.';
+    else msg='Error: '+e.message;
+    document.getElementById('errorMsg').textContent=msg;
+    show('error');
+  }
+}
+
+function stopStream(){cancelAnimationFrame(animId);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+
+function startLoop(){
+  const v=document.getElementById('video'),c=document.getElementById('canvas'),dot=document.getElementById('sampleDot'),ctx=c.getContext('2d',{willReadFrequently:true});
+  function tick(){
+    if(v.readyState>=2){
+      c.width=v.videoWidth||320;c.height=v.videoHeight||240;
+      ctx.save();ctx.scale(-1,1);ctx.drawImage(v,-c.width,0,c.width,c.height);ctx.restore();
+      const cx=c.width/2,cy=c.height/2,s=30;
+      try{const px=ctx.getImageData(cx-s/2,cy-s/2,s,s);const rgb=detectSkin(px);if(rgb)dot.style.background=`rgb(${rgb.r|0},${rgb.g|0},${rgb.b|0})`;}catch(_){}
+    }
+    animId=requestAnimationFrame(tick);
+  }
+  animId=requestAnimationFrame(tick);
+}
+
+async function captureAndAnalyse(){
+  cancelAnimationFrame(animId);
+  document.getElementById('analyzingOverlay').classList.add('show');
+  await new Promise(r=>setTimeout(r,1400));
+  const v=document.getElementById('video'),c=document.getElementById('canvas');
+  c.width=v.videoWidth;c.height=v.videoHeight;
+  const ctx=c.getContext('2d',{willReadFrequently:true});
+  ctx.save();ctx.scale(-1,1);ctx.drawImage(v,-c.width,0,c.width,c.height);ctx.restore();
+  const cx=c.width/2,cy=c.height/2,w=c.width*0.26,h=c.height*0.36;
+  const data=ctx.getImageData(cx-w/2,cy-h/2,w,h);
+  const rgb=detectSkin(data);
+  stopStream();
+  document.getElementById('analyzingOverlay').classList.remove('show');
+  if(!rgb){alert('Could not detect skin tone. Ensure good lighting and centre your face in the oval.');requestCamera();return;}
+  showResults(rgb,matchTone(rgb));
+}
+
+function showResults(rgb,tone){
+  const rc=`rgb(${rgb.r|0},${rgb.g|0},${rgb.b|0})`;
+  document.getElementById('toneBanner').style.background=rc;
+  document.getElementById('toneSwatch').style.background=rc;
+  document.getElementById('toneName').textContent=tone.name;
+  document.getElementById('toneDesc').textContent=tone.desc;
+  const list=document.getElementById('colorsList');
+  list.innerHTML=tone.colors.map(c=>`<div class="color-card"><div class="color-block" style="background:${c.hex}"></div><div class="color-info"><div class="color-name">${c.name}</div><div class="color-desc">${c.desc}</div><div class="color-hex">${c.hex}</div></div><span class="match-badge">${c.match}</span></div>`).join('');
+  show('results');window.scrollTo({top:0,behavior:'instant'});
+}
+
+function retake(){stopStream();show('welcome');}
+</script>
+</body>
+</html>
