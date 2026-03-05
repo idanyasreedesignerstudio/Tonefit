@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#faf9f7"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-title" content="ToneFit"/>
-  <title>ToneFit — Color Intelligence</title>
+  <title>ToneFit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -25,17 +25,19 @@
     .logo span{color:var(--gold)}
     .tagline{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink2)}
 
+    /* Only .on screens are visible */
     .scr{display:none;flex:1;flex-direction:column}
     .scr.on{display:flex}
 
     /* WELCOME */
     #s-welcome{align-items:center;justify-content:center;padding:36px 26px;text-align:center}
-    .w-icon{font-size:58px;margin-bottom:18px}
+    .w-icon{font-size:52px;margin-bottom:18px;line-height:1}
     .w-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:400;line-height:1.25;margin-bottom:10px}
     .w-sub{font-size:13px;color:var(--ink2);line-height:1.8;margin-bottom:28px;max-width:290px}
     .feat-list{display:flex;flex-direction:column;gap:9px;width:100%;margin-bottom:28px}
-    .feat{background:var(--white);border:1px solid var(--border);border-radius:13px;padding:12px 15px;font-size:13px;color:#555;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
-    .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--ink);color:#fff;border:none;padding:15px 36px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:400;letter-spacing:.3px;cursor:pointer;box-shadow:0 4px 18px rgba(26,24,22,0.2);transition:transform .12s}
+    .feat{background:var(--white);border:1px solid var(--border);border-radius:13px;padding:12px 15px;font-size:13px;color:#555;text-align:left;box-shadow:0 2px 8px rgba(0,0,0,.04);display:flex;align-items:center;gap:10px}
+    .feat-icon{width:28px;height:28px;border-radius:8px;background:var(--gold-bg);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+    .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--ink);color:#fff;border:none;padding:15px 36px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:400;letter-spacing:.3px;cursor:pointer;box-shadow:0 4px 18px rgba(26,24,22,.2);transition:transform .12s}
     .btn:active{transform:scale(.97)}
     .priv{font-size:11px;color:#ccc;margin-top:10px}
 
@@ -43,7 +45,7 @@
     #s-req{align-items:center;justify-content:center;gap:14px}
     .spinner{width:42px;height:42px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .75s linear infinite}
     .req-t{font-size:17px;font-weight:300;color:#555}
-    .req-s{font-size:13px;color:#aaa}
+    .req-s{font-size:13px;color:#aaa;text-align:center;padding:0 24px}
 
     /* CAMERA */
     #s-cam{flex-direction:column}
@@ -61,7 +63,7 @@
     /* ERROR */
     #s-err{align-items:center;justify-content:center;padding:30px 22px;text-align:center}
     .err-box{background:#fff8f8;border:1px solid #fde;border-radius:var(--radius);padding:26px 22px;width:100%}
-    .err-icon{font-size:34px;margin-bottom:10px}
+    .err-icon{font-size:32px;margin-bottom:10px}
     .err-msg{font-size:13px;color:#c0392b;line-height:1.7;margin-bottom:18px}
     .btn-sm{background:var(--ink);color:#fff;border:none;padding:11px 26px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer}
 
@@ -70,7 +72,7 @@
     .tone-banner{width:100%;aspect-ratio:3/4;display:flex;align-items:flex-end;justify-content:center;padding-bottom:28px;flex-shrink:0;position:relative;overflow:hidden}
     .tone-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(0,0,0,.5));pointer-events:none}
     .tb-inner{position:relative;z-index:2;text-align:center}
-    .tb-label{font-size:12px;color:rgba(255,255,255,.75);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+    .tb-label{font-size:11px;color:rgba(255,255,255,.75);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px}
     .tb-name{font-family:'Cormorant Garamond',serif;font-size:32px;color:white;font-weight:400;line-height:1.1}
 
     .user-pill{display:none;align-items:center;gap:8px;background:var(--gold-bg);border:1px solid var(--border);border-radius:100px;padding:6px 14px 6px 6px;margin:12px 16px 0;align-self:flex-start}
@@ -86,7 +88,6 @@
     .tone-ds{font-size:11px;color:var(--ink2);margin-top:2px}
     .retake-btn{background:none;border:1px solid var(--border);color:var(--ink2);font-family:'DM Sans',sans-serif;font-size:11px;padding:6px 12px;border-radius:100px;cursor:pointer;white-space:nowrap}
 
-    /* COLOUR CARDS */
     .reco{padding:18px 16px 14px}
     .sec-title{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:400;margin-bottom:2px}
     .sec-sub{font-size:11px;color:var(--ink2);letter-spacing:.3px;margin-bottom:16px}
@@ -99,7 +100,6 @@
     .ccard:nth-child(4){animation-delay:.30s}
     .ccard:nth-child(5){animation-delay:.38s}
 
-    /* T-SHIRT */
     .tshirt-wrap{width:100%;padding:24px 0 16px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
     .tshirt-svg{width:170px;height:auto;filter:drop-shadow(0 10px 28px rgba(0,0,0,.18))}
 
@@ -117,33 +117,30 @@
     .hex-rgb{font-size:10px;color:#bbb;font-family:monospace;margin-top:2px}
 
     .card-actions{padding:10px 16px 14px}
-    .dl-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:var(--ink);color:#fff;border:none;padding:11px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:transform .12s;box-shadow:0 3px 12px rgba(26,24,22,0.15)}
+    .dl-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;background:var(--ink);color:#fff;border:none;padding:11px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:transform .12s;box-shadow:0 3px 12px rgba(26,24,22,.15)}
     .dl-btn:active{transform:scale(.97)}
 
     .dl-all-wrap{padding:4px 16px 20px}
     .dl-all-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--gold);color:#fff;border:none;padding:15px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:400;cursor:pointer;box-shadow:0 4px 20px rgba(201,169,110,.4);transition:transform .12s}
     .dl-all-btn:active{transform:scale(.97)}
 
-    /* RATING */
     .rating-wrap{margin:0 16px 36px;padding:20px;background:var(--white);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);text-align:center}
     .rating-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;margin-bottom:4px}
     .rating-sub{font-size:12px;color:var(--ink2);margin-bottom:16px}
     .stars{display:flex;justify-content:center;gap:8px;margin-bottom:10px}
-    .star{font-size:34px;cursor:pointer;transition:transform .15s;color:#ddd;user-select:none}
+    .star{font-size:34px;cursor:pointer;transition:transform .15s;color:#ddd;user-select:none;line-height:1}
     .star.lit{color:#f4c430}
-    .star:hover{transform:scale(1.2)}
+    .star:active{transform:scale(1.2)}
     .rating-done{font-size:13px;color:var(--gold);font-weight:500;margin-top:6px;display:none}
 
-    /* LOGIN MODAL */
     .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:50;align-items:flex-end;justify-content:center}
     .modal-bg.on{display:flex}
     .modal{background:var(--white);border-radius:24px 24px 0 0;padding:28px 22px 44px;width:100%;max-width:430px;animation:slideUp .35s ease}
     .modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;margin-bottom:6px}
     .modal-sub{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:20px}
-    .inp{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:13px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#faf9f7;color:var(--ink);transition:border-color .2s}
+    .inp{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:13px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;background:#faf9f7;color:var(--ink);transition:border-color .2s;margin-bottom:10px}
     .inp:focus{border-color:var(--gold)}
-    .modal-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px}
-    .btn-gold{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--gold);color:#fff;border:none;padding:15px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;box-shadow:0 4px 18px rgba(201,169,110,.35)}
+    .btn-gold{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--gold);color:#fff;border:none;padding:15px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;box-shadow:0 4px 18px rgba(201,169,110,.35);margin-bottom:10px}
     .modal-skip{font-size:12px;color:var(--ink2);text-align:center;cursor:pointer;text-decoration:underline;padding:6px}
 
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -161,23 +158,23 @@
 
 <!-- WELCOME -->
 <div class="scr on" id="s-welcome">
-  <div class="w-icon">🎨</div>
+  <div class="w-icon">&#127912;</div>
   <div class="w-title">Discover Your<br><strong>Best Colours</strong></div>
-  <p class="w-sub">Point your camera at your face. We detect your skin tone and show 5 perfect outfit colours — with t-shirt mockups, Pantone codes & downloads.</p>
+  <p class="w-sub">Point your camera at your face. We detect your skin tone and show 5 perfect outfit colours with t-shirt mockups, Pantone codes and downloads.</p>
   <div class="feat-list">
-    <div class="feat">📷 Live camera skin tone detection</div>
-    <div class="feat">👕 Real t-shirt mockup for each colour</div>
-    <div class="feat">🎨 Pantone colour codes included</div>
-    <div class="feat">⬇️ Download single or all 5 cards</div>
+    <div class="feat"><div class="feat-icon">&#128247;</div> Live camera skin tone detection</div>
+    <div class="feat"><div class="feat-icon">&#128087;</div> Real t-shirt mockup for each colour</div>
+    <div class="feat"><div class="feat-icon">&#127912;</div> Pantone colour codes included</div>
+    <div class="feat"><div class="feat-icon">&#11015;</div> Download single or all 5 cards</div>
   </div>
-  <button class="btn" onclick="requestCamera()"><span>✦</span> Enable Camera</button>
-  <p class="priv">Camera is used locally — nothing is uploaded</p>
+  <button class="btn" onclick="requestCamera()">&#10022; Enable Camera</button>
+  <p class="priv">Camera is used locally &mdash; nothing is uploaded</p>
 </div>
 
 <!-- REQUESTING -->
 <div class="scr" id="s-req">
   <div class="spinner"></div>
-  <div class="req-t">Requesting camera…</div>
+  <div class="req-t">Requesting camera&hellip;</div>
   <div class="req-s">Tap <strong>Allow</strong> when your browser asks</div>
 </div>
 
@@ -190,20 +187,18 @@
     <div class="cam-hint">Align your face within the oval</div>
     <div class="anl-ov" id="anl-ov">
       <div class="spinner"></div>
-      <div class="anl-t">Analysing your tone…</div>
+      <div class="anl-t">Analysing your tone&hellip;</div>
     </div>
   </div>
   <div class="cap-wrap">
-    <button class="btn" style="max-width:300px" onclick="captureAndAnalyse()">
-      <span>✦</span> Analyse My Skin Tone
-    </button>
+    <button class="btn" style="max-width:300px" onclick="captureAndAnalyse()">&#10022; Analyse My Skin Tone</button>
   </div>
 </div>
 
 <!-- ERROR -->
 <div class="scr" id="s-err">
   <div class="err-box">
-    <div class="err-icon">📷</div>
+    <div class="err-icon">&#128247;</div>
     <div class="err-msg" id="errMsg">Camera access was denied.</div>
     <button class="btn-sm" onclick="requestCamera()">Try Again</button>
   </div>
@@ -217,12 +212,10 @@
       <div class="tb-name" id="toneNameBig"></div>
     </div>
   </div>
-
   <div class="user-pill" id="userPill">
     <div class="user-av" id="userAv"></div>
     <div class="user-name" id="userName"></div>
   </div>
-
   <div class="tone-card">
     <div class="tone-row">
       <div class="tone-sw" id="toneSw"></div>
@@ -233,28 +226,25 @@
       <button class="retake-btn" onclick="retake()">Retake</button>
     </div>
   </div>
-
   <div class="reco">
     <div class="sec-title">Your 5 Best Colours</div>
-    <div class="sec-sub">T-shirt mockups · Pantone codes · Download ready</div>
+    <div class="sec-sub">T-shirt mockups &middot; Pantone codes &middot; Download ready</div>
     <div class="clist" id="clist"></div>
   </div>
-
   <div class="dl-all-wrap">
-    <button class="dl-all-btn" onclick="downloadAll()">⬇️ Download All 5 Colours</button>
+    <button class="dl-all-btn" onclick="downloadAll()">&#11015; Download All 5 Colours</button>
   </div>
-
   <div class="rating-wrap">
     <div class="rating-title">How was your experience?</div>
     <div class="rating-sub">Tap a star to rate ToneFit</div>
     <div class="stars">
-      <span class="star" onclick="rate(1)">★</span>
-      <span class="star" onclick="rate(2)">★</span>
-      <span class="star" onclick="rate(3)">★</span>
-      <span class="star" onclick="rate(4)">★</span>
-      <span class="star" onclick="rate(5)">★</span>
+      <span class="star" onclick="rate(1)">&#9733;</span>
+      <span class="star" onclick="rate(2)">&#9733;</span>
+      <span class="star" onclick="rate(3)">&#9733;</span>
+      <span class="star" onclick="rate(4)">&#9733;</span>
+      <span class="star" onclick="rate(5)">&#9733;</span>
     </div>
-    <div class="rating-done" id="ratingDone">Thanks for your feedback! 🙏</div>
+    <div class="rating-done" id="ratingDone">Thanks for your feedback!</div>
   </div>
 </div>
 
@@ -263,250 +253,46 @@
   <div class="modal">
     <div class="modal-title">Save &amp; Download</div>
     <div class="modal-sub">Enter your name and email to download your personalised colour card and save your results.</div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <input id="loginName" class="inp" type="text" placeholder="Your name"/>
-      <input id="loginEmail" class="inp" type="email" placeholder="Email address"/>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-gold" onclick="submitLogin()">✦ Continue &amp; Download</button>
-      <div class="modal-skip" onclick="skipLogin()">Skip — download without saving</div>
-    </div>
+    <input id="loginName" class="inp" type="text" placeholder="Your name"/>
+    <input id="loginEmail" class="inp" type="email" placeholder="Email address"/>
+    <button class="btn-gold" onclick="submitLogin()">&#10022; Continue &amp; Download</button>
+    <div class="modal-skip" onclick="skipLogin()">Skip &mdash; download without saving</div>
   </div>
 </div>
 
 <canvas id="canvas"></canvas>
 
 <script>
-const TONES=[
+var TONES=[
   {name:"Porcelain",desc:"Very fair, cool or neutral undertones",range:{hMin:0,hMax:40,sMin:10,sMax:45,lMin:75,lMax:100},colors:[
     {name:"Navy Blue",hex:"#1B3A5C",desc:"Creates elegant contrast",match:"95%",pantone:"PANTONE 289 C",pname:"Dark Navy"},
     {name:"Dusty Rose",hex:"#C4879A",desc:"Softly flattering warmth",match:"92%",pantone:"PANTONE 698 C",pname:"Dusty Rose"},
     {name:"Sage Green",hex:"#7A9E7E",desc:"Earthy complement to fair skin",match:"89%",pantone:"PANTONE 5555 C",pname:"Sage"},
-    {name:"Burgundy",hex:"#722F37",desc:"Rich depth & drama",match:"87%",pantone:"PANTONE 7421 C",pname:"Burgundy"},
-    {name:"Icy Lavender",hex:"#C3B8D8",desc:"Ethereal cool-toned harmony",match:"85%",pantone:"PANTONE 2635 C",pname:"Lavender Mist"},
+    {name:"Burgundy",hex:"#722F37",desc:"Rich depth and drama",match:"87%",pantone:"PANTONE 7421 C",pname:"Burgundy"},
+    {name:"Icy Lavender",hex:"#C3B8D8",desc:"Ethereal cool-toned harmony",match:"85%",pantone:"PANTONE 2635 C",pname:"Lavender Mist"}
   ]},
   {name:"Ivory",desc:"Fair skin, warm or neutral undertones",range:{hMin:15,hMax:45,sMin:20,sMax:55,lMin:68,lMax:82},colors:[
     {name:"Camel",hex:"#C19A6B",desc:"Warm-toned sophistication",match:"95%",pantone:"PANTONE 729 C",pname:"Warm Camel"},
     {name:"Cobalt Blue",hex:"#0047AB",desc:"Bold complementary contrast",match:"92%",pantone:"PANTONE 286 C",pname:"Cobalt Blue"},
     {name:"Forest Green",hex:"#355E3B",desc:"Rich natural harmony",match:"90%",pantone:"PANTONE 357 C",pname:"Forest Green"},
     {name:"Terracotta",hex:"#E2725B",desc:"Glows with warm undertones",match:"88%",pantone:"PANTONE 7527 C",pname:"Terracotta"},
-    {name:"Cream White",hex:"#FFFDD0",desc:"Soft tonal dressing",match:"85%",pantone:"PANTONE 600 C",pname:"Cream"},
+    {name:"Cream White",hex:"#FFFDD0",desc:"Soft tonal dressing",match:"85%",pantone:"PANTONE 600 C",pname:"Cream"}
   ]},
   {name:"Beige",desc:"Light to medium, neutral-warm undertones",range:{hMin:20,hMax:50,sMin:25,sMax:60,lMin:58,lMax:72},colors:[
     {name:"Olive Green",hex:"#6B7C41",desc:"Natural earthy harmony",match:"95%",pantone:"PANTONE 399 C",pname:"Olive"},
     {name:"Rust Orange",hex:"#B7410E",desc:"Warmth amplified",match:"92%",pantone:"PANTONE 1525 C",pname:"Rust"},
     {name:"Teal",hex:"#008080",desc:"Refreshing contrast",match:"90%",pantone:"PANTONE 3278 C",pname:"Teal"},
     {name:"Golden Yellow",hex:"#FFD700",desc:"Sun-kissed radiance",match:"88%",pantone:"PANTONE 116 C",pname:"Golden Yellow"},
-    {name:"Warm Mauve",hex:"#997B8D",desc:"Elegant muted complement",match:"85%",pantone:"PANTONE 5135 C",pname:"Warm Mauve"},
+    {name:"Warm Mauve",hex:"#997B8D",desc:"Elegant muted complement",match:"85%",pantone:"PANTONE 5135 C",pname:"Warm Mauve"}
   ]},
   {name:"Sand",desc:"Medium skin, warm golden undertones",range:{hMin:20,hMax:50,sMin:30,sMax:65,lMin:48,lMax:62},colors:[
     {name:"Deep Purple",hex:"#4B0082",desc:"Royal contrast for warm tones",match:"95%",pantone:"PANTONE 2685 C",pname:"Deep Violet"},
     {name:"Coral",hex:"#FF6F61",desc:"Vibrant warm-toned glow",match:"93%",pantone:"PANTONE 171 C",pname:"Living Coral"},
     {name:"Emerald",hex:"#50C878",desc:"Fresh jewel-toned brilliance",match:"90%",pantone:"PANTONE 354 C",pname:"Emerald"},
     {name:"Electric Blue",hex:"#0071E3",desc:"Cool pop against warm skin",match:"88%",pantone:"PANTONE 2925 C",pname:"Electric Blue"},
-    {name:"Off-White",hex:"#FAF0E6",desc:"Effortless light contrast",match:"84%",pantone:"PANTONE 9180 C",pname:"Linen"},
+    {name:"Off-White",hex:"#FAF0E6",desc:"Effortless light contrast",match:"84%",pantone:"PANTONE 9180 C",pname:"Linen"}
   ]},
   {name:"Honey",desc:"Medium-tan, golden warm undertones",range:{hMin:18,hMax:45,sMin:35,sMax:70,lMin:38,lMax:52},colors:[
-    {name:"Burnt Sienna",hex:"#E97451",desc:"Analogous warmth & depth",match:"94%",pantone:"PANTONE 1595 C",pname:"Burnt Sienna"},
+    {name:"Burnt Sienna",hex:"#E97451",desc:"Analogous warmth and depth",match:"94%",pantone:"PANTONE 1595 C",pname:"Burnt Sienna"},
     {name:"Royal Blue",hex:"#4169E1",desc:"Cool contrast makes skin glow",match:"92%",pantone:"PANTONE 2728 C",pname:"Royal Blue"},
-    {name:"Mustard",hex:"#FFDB58",desc:"Golden harmony",match:"90%",pantone:"PANTONE 1215 C",pname:"Mustard"},
-    {name:"Chocolate",hex:"#7B3F00",desc:"Rich tonal depth",match:"88%",pantone:"PANTONE 4625 C",pname:"Chocolate"},
-    {name:"Jade Green",hex:"#00A86B",desc:"Fresh & striking complement",match:"86%",pantone:"PANTONE 340 C",pname:"Jade"},
-  ]},
-  {name:"Caramel",desc:"Tan to medium-dark, warm undertones",range:{hMin:15,hMax:42,sMin:38,sMax:72,lMin:28,lMax:42},colors:[
-    {name:"Ivory White",hex:"#FFFFF0",desc:"Luminous light contrast",match:"96%",pantone:"PANTONE 9183 C",pname:"Ivory"},
-    {name:"Magenta",hex:"#CC0066",desc:"Vivid pop of contrast",match:"93%",pantone:"PANTONE 233 C",pname:"Magenta"},
-    {name:"Tangerine",hex:"#F28500",desc:"Warm citrus radiance",match:"90%",pantone:"PANTONE 144 C",pname:"Tangerine"},
-    {name:"Slate Blue",hex:"#6A7BA2",desc:"Cool muted sophistication",match:"88%",pantone:"PANTONE 7688 C",pname:"Slate Blue"},
-    {name:"Fern Green",hex:"#4F7942",desc:"Earthy natural complement",match:"85%",pantone:"PANTONE 363 C",pname:"Fern"},
-  ]},
-  {name:"Chestnut",desc:"Medium-dark, rich warm-neutral tones",range:{hMin:10,hMax:40,sMin:35,sMax:72,lMin:20,lMax:32},colors:[
-    {name:"Bright White",hex:"#FFFFFF",desc:"Maximum luminosity contrast",match:"96%",pantone:"PANTONE 11-0601 TCX",pname:"Bright White"},
-    {name:"Hot Pink",hex:"#FF69B4",desc:"Vivid and flattering vibrancy",match:"93%",pantone:"PANTONE 812 C",pname:"Hot Pink"},
-    {name:"Cobalt Green",hex:"#006B5B",desc:"Deep cool complement",match:"91%",pantone:"PANTONE 3295 C",pname:"Cobalt Green"},
-    {name:"Saffron",hex:"#F4C430",desc:"Golden warmth enhancer",match:"89%",pantone:"PANTONE 1225 C",pname:"Saffron"},
-    {name:"Warm Red",hex:"#C0392B",desc:"Bold rich-toned harmony",match:"86%",pantone:"PANTONE 485 C",pname:"Warm Red"},
-  ]},
-  {name:"Espresso",desc:"Deep dark skin, rich cool or warm tones",range:{hMin:0,hMax:50,sMin:20,sMax:80,lMin:0,lMax:22},colors:[
-    {name:"Pure White",hex:"#FFFFFF",desc:"Striking luminous contrast",match:"97%",pantone:"PANTONE 11-0601 TCX",pname:"Bright White"},
-    {name:"Electric Yellow",hex:"#FFE600",desc:"Radiant vibrant warmth",match:"94%",pantone:"PANTONE 102 C",pname:"Electric Yellow"},
-    {name:"Royal Purple",hex:"#6B2FA0",desc:"Majestic jewel-toned depth",match:"92%",pantone:"PANTONE 2083 C",pname:"Royal Purple"},
-    {name:"Sky Blue",hex:"#87CEEB",desc:"Airy cool-toned brightness",match:"89%",pantone:"PANTONE 2905 C",pname:"Sky Blue"},
-    {name:"Bright Coral",hex:"#FF4040",desc:"Bold vivid pop",match:"87%",pantone:"PANTONE 1788 C",pname:"Bright Coral"},
-  ]},
-];
-
-function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h,s,l=(mx+mn)/2;if(mx===mn){h=s=0;}else{const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}}return[h*360,s*100,l*100];}
-function detectSkin(id){const d=id.data;let rs=0,gs=0,bs=0,n=0;for(let i=0;i<d.length;i+=16){const r=d[i],g=d[i+1],b=d[i+2];if(r>60&&g>30&&b>15&&r>b&&(r-g)>8&&(Math.max(r,g,b)-Math.min(r,g,b))>10){rs+=r;gs+=g;bs+=b;n++;}}return n>20?{r:rs/n,g:gs/n,b:bs/n}:null;}
-function matchTone(rgb){const[h,s,l]=rgbToHsl(rgb.r,rgb.g,rgb.b);let best=0,bsc=-Infinity;TONES.forEach((t,i)=>{const{hMin,hMax,sMin,sMax,lMin,lMax}=t.range;const hs=h>=hMin&&h<=hMax?0:-Math.min(Math.abs(h-hMin),Math.abs(h-hMax));const ss=s>=sMin&&s<=sMax?0:-Math.min(Math.abs(s-sMin),Math.abs(s-sMax));const ls=l>=lMin&&l<=lMax?0:-Math.min(Math.abs(l-lMin),Math.abs(l-lMax))*2;if(hs+ss+ls>bsc){bsc=hs+ss+ls;best=i;}});return TONES[best];}
-function lighten(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);const m=c=>Math.round(c+(255-c)*a);return`rgb(${m(r)},${m(g)},${m(b)})`;}
-function hexToRgb(hex){return`${parseInt(hex.slice(1,3),16)}, ${parseInt(hex.slice(3,5),16)}, ${parseInt(hex.slice(5,7),16)}`;}
-
-// T-SHIRT SVG
-function tshirtSVG(color){
-  const id='g'+color.replace('#','');
-  const rows=Array.from({length:28},(_,i)=>`<line x1="0" y1="${i*8}" x2="200" y2="${i*8}" stroke="#000" stroke-width=".7"/>`).join('');
-  const cols=Array.from({length:26},(_,i)=>`<line x1="${i*8}" y1="0" x2="${i*8}" y2="230" stroke="#000" stroke-width=".7"/>`).join('');
-  return `<svg viewBox="0 0 200 225" xmlns="http://www.w3.org/2000/svg" class="tshirt-svg">
-  <defs>
-    <linearGradient id="${id}" x1="0%" y1="0%" x2="100%" y2="110%">
-      <stop offset="0%" stop-color="${color}" stop-opacity="1"/>
-      <stop offset="45%" stop-color="${color}" stop-opacity=".95"/>
-      <stop offset="100%" stop-color="${color}" stop-opacity=".72"/>
-    </linearGradient>
-    <clipPath id="c${id}">
-      <path d="M50,20 Q58,8 70,6 Q81,20 100,22 Q119,20 130,6 Q142,8 150,20 L176,54 L150,66 L150,198 Q150,205 142,205 L58,205 Q50,205 50,198 L50,66 L24,54 Z"/>
-    </clipPath>
-  </defs>
-  <path d="M50,20 Q58,8 70,6 Q81,20 100,22 Q119,20 130,6 Q142,8 150,20 L176,54 L150,66 L150,198 Q150,205 142,205 L58,205 Q50,205 50,198 L50,66 L24,54 Z" fill="rgba(0,0,0,0.1)" transform="translate(3,5)"/>
-  <path d="M50,20 Q58,8 70,6 Q81,20 100,22 Q119,20 130,6 Q142,8 150,20 L176,54 L150,66 L150,198 Q150,205 142,205 L58,205 Q50,205 50,198 L50,66 L24,54 Z" fill="url(#${id})"/>
-  <g clip-path="url(#c${id})" opacity="0.06">${rows}${cols}</g>
-  <path d="M24,54 L50,66 L50,92 L28,78 Z" fill="rgba(255,255,255,0.14)"/>
-  <path d="M176,54 L150,66 L150,92 L172,78 Z" fill="rgba(0,0,0,0.09)"/>
-  <path d="M70,6 Q81,20 100,22 Q119,20 130,6 Q114,2 100,2 Q86,2 70,6 Z" fill="rgba(0,0,0,0.16)"/>
-  <line x1="100" y1="24" x2="100" y2="203" stroke="rgba(0,0,0,0.05)" stroke-width="1" stroke-dasharray="4,5"/>
-  <path d="M50,198 Q100,205 150,198" stroke="rgba(0,0,0,0.1)" stroke-width="1.5" fill="none"/>
-  <path d="M70,6 Q86,15 100,22 L100,2 Q86,2 70,6Z" fill="rgba(255,255,255,0.12)"/>
-</svg>`;
-}
-
-let stream=null,animId=null,pendingDl=null,currentUser=null,detectedRgb=null,currentTone=null;
-function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
-
-async function requestCamera(){
-  show('s-req');
-  try{
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw Object.assign(new Error('unavailable'),{name:'NotSupportedError'});
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:960}},audio:false});
-    const v=document.getElementById('video');v.srcObject=stream;
-    v.onloadedmetadata=()=>{show('s-cam');startLoop();};
-  }catch(e){
-    let msg='Camera access was denied.';
-    if(e.name==='NotAllowedError') msg='Permission denied. Tap the 🔒 icon in your address bar, set Camera to Allow, then tap Try Again.';
-    else if(e.name==='NotFoundError') msg='No camera found on this device.';
-    else if(e.name==='NotSupportedError') msg='Camera API unavailable. Make sure the page is opened over HTTPS.';
-    else msg='Error: '+e.message;
-    document.getElementById('errMsg').textContent=msg;show('s-err');
-  }
-}
-function stopStream(){cancelAnimationFrame(animId);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
-function startLoop(){
-  const v=document.getElementById('video'),c=document.getElementById('canvas'),dot=document.getElementById('sdot'),ctx=c.getContext('2d',{willReadFrequently:true});
-  function tick(){
-    if(v.readyState>=2){c.width=v.videoWidth||320;c.height=v.videoHeight||240;ctx.save();ctx.scale(-1,1);ctx.drawImage(v,-c.width,0,c.width,c.height);ctx.restore();const cx=c.width/2,cy=c.height/2,s=30;try{const px=ctx.getImageData(cx-s/2,cy-s/2,s,s);const rgb=detectSkin(px);if(rgb)dot.style.background=`rgb(${rgb.r|0},${rgb.g|0},${rgb.b|0})`;}catch(_){}}
-    animId=requestAnimationFrame(tick);
-  }
-  animId=requestAnimationFrame(tick);
-}
-
-async function captureAndAnalyse(){
-  cancelAnimationFrame(animId);
-  document.getElementById('anl-ov').classList.add('on');
-  await new Promise(r=>setTimeout(r,1400));
-  const v=document.getElementById('video'),c=document.getElementById('canvas');
-  c.width=v.videoWidth;c.height=v.videoHeight;
-  const ctx=c.getContext('2d',{willReadFrequently:true});
-  ctx.save();ctx.scale(-1,1);ctx.drawImage(v,-c.width,0,c.width,c.height);ctx.restore();
-  const cx=c.width/2,cy=c.height/2,w=c.width*.26,h=c.height*.36;
-  const data=ctx.getImageData(cx-w/2,cy-h/2,w,h);
-  const rgb=detectSkin(data);
-  stopStream();document.getElementById('anl-ov').classList.remove('on');
-  if(!rgb){alert('Could not detect skin tone. Ensure good lighting and centre your face.');requestCamera();return;}
-  detectedRgb=rgb;currentTone=matchTone(rgb);
-  showResults(rgb,currentTone);
-}
-
-function showResults(rgb,tone){
-  const rc=`rgb(${rgb.r|0},${rgb.g|0},${rgb.b|0})`;
-  document.getElementById('toneBanner').style.background=rc;
-  document.getElementById('toneNameBig').textContent=tone.name;
-  document.getElementById('toneSw').style.background=rc;
-  document.getElementById('toneNm').textContent=tone.name;
-  document.getElementById('toneDs').textContent=tone.desc;
-  const list=document.getElementById('clist');
-  list.innerHTML='';
-  tone.colors.forEach((c,i)=>{
-    const div=document.createElement('div');
-    div.className='ccard';div.id='ccard-'+i;
-    div.innerHTML=`
-      <div class="tshirt-wrap" style="background:${lighten(c.hex,.88)}">${tshirtSVG(c.hex)}</div>
-      <div class="cinfo">
-        <div class="cname-row"><div class="cname">${c.name}</div><span class="match-badge">${c.match} match</span></div>
-        <div class="cdesc">${c.desc}</div>
-        <div class="pantone-row">
-          <div class="pantone-chip" style="background:${c.hex}"></div>
-          <div class="pantone-info">
-            <div class="pantone-code">${c.pantone}</div>
-            <div class="pantone-name">${c.pname}</div>
-            <div class="hex-rgb">${c.hex} &nbsp;·&nbsp; RGB(${hexToRgb(c.hex)})</div>
-          </div>
-        </div>
-      </div>
-      <div class="card-actions">
-        <button class="dl-btn" onclick="downloadCard(${i})">⬇ Download This Card</button>
-      </div>`;
-    list.appendChild(div);
-  });
-  show('s-res');window.scrollTo({top:0,behavior:'instant'});
-}
-
-function retake(){stopStream();show('s-welcome');}
-
-// DOWNLOAD
-function downloadCard(idx){pendingDl={type:'single',idx};currentUser?executeDownload():showLoginModal();}
-function downloadAll(){pendingDl={type:'all'};currentUser?executeDownload():showLoginModal();}
-
-async function executeDownload(){
-  if(!pendingDl)return;
-  try{
-    if(pendingDl.type==='single'){
-      const el=document.getElementById('ccard-'+pendingDl.idx);
-      const cv=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',logging:false});
-      triggerDl(cv,`tonefit-colour-${pendingDl.idx+1}.png`);
-    }else{
-      const cards=[...document.querySelectorAll('.ccard')];
-      const canvases=await Promise.all(cards.map(el=>html2canvas(el,{scale:2,backgroundColor:'#ffffff',logging:false})));
-      const w=canvases[0].width,gap=8,headerH=110;
-      const totalH=canvases.reduce((s,c)=>s+c.height+gap,headerH);
-      const merged=document.createElement('canvas');
-      merged.width=w;merged.height=totalH;
-      const ctx=merged.getContext('2d');
-      ctx.fillStyle='#faf9f7';ctx.fillRect(0,0,w,totalH);
-      ctx.fillStyle='#1a1816';ctx.font=`bold ${Math.round(w*.055)}px Georgia,serif`;ctx.textAlign='center';
-      ctx.fillText('ToneFit — Your Colour Palette',w/2,54);
-      ctx.font=`${Math.round(w*.032)}px sans-serif`;ctx.fillStyle='#9a9088';
-      ctx.fillText(`Skin Tone: ${currentTone?currentTone.name:''}  ·  idanyasreedesignerstudio.github.io/Tonefit`,w/2,84);
-      let y=headerH;
-      canvases.forEach(c=>{ctx.drawImage(c,0,y);y+=c.height+gap;});
-      triggerDl(merged,'tonefit-my-colours.png');
-    }
-  }catch(e){alert('Download failed. Please try again.');}
-  pendingDl=null;
-}
-function triggerDl(canvas,fname){const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download=fname;a.click();}
-
-// LOGIN
-function showLoginModal(){document.getElementById('loginModal').classList.add('on');}
-function hideLoginModal(){document.getElementById('loginModal').classList.remove('on');}
-function submitLogin(){
-  const name=document.getElementById('loginName').value.trim();
-  const email=document.getElementById('loginEmail').value.trim();
-  if(!name){alert('Please enter your name.');return;}
-  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
-  currentUser={name,email};showUserPill(name);hideLoginModal();executeDownload();
-}
-function skipLogin(){currentUser={name:'Guest',email:''};hideLoginModal();executeDownload();}
-function showUserPill(name){
-  document.getElementById('userAv').textContent=name[0].toUpperCase();
-  document.getElementById('userName').textContent='Hi, '+name;
-  document.getElementById('userPill').classList.add('on');
-}
-
-// RATING
-function rate(n){
-  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('lit',i<n));
-  document.getElementById('ratingDone').style.display='block';
-}
-</script>
-</body>
-</html>
+    {name:"Mustard",hex:"#FFDB58",desc:"Golden harmony",match:"90%",pantone:"PA
